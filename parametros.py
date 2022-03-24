@@ -13,8 +13,8 @@ ENERG = 1.0     # vamos usar a distribuicao do Bahcall
 
 # parametros da EDO
 passo = 1e-4
-eps_abs = 1e-5
-eps_rel = 1e-5
+eps_abs = 1e-6
+eps_rel = 1e-6
 
 # condicao inicial
 re1 = 1.0
