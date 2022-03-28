@@ -9,12 +9,11 @@ theta12 = 33.44
 theta23 = 49.2  # todos os angulos em graus
 theta13 = 8.57
 deltacp = 195.0
-ENERG = 1.0     # vamos usar a distribuicao do Bahcall
 
 # parametros da EDO
-passo = 1e-4
-eps_abs = 1e-6
-eps_rel = 1e-6
+passo = 1e-7
+eps_abs = 1e-8
+eps_rel = 1e-8
 
 # condicao inicial
 re1 = 1.0
@@ -26,5 +25,8 @@ im3 = 0.0
 
 # constantes
 G_F = 3.0
+N_A = 6.02214076 * 10e23
 energ = 1.0
-# metodo = "rkf45"
+metodo = 'DOP853'   # qual metodo utilizar
+
+# energia em MeV, distancia em R_solar, velocidade em c=1

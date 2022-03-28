@@ -1,6 +1,6 @@
 # notes:
 # this table was generated applying 10^r to the second column
-# because the data was log10(N_e, N_A)
+# because the data was log10(N_e/N_A)
 # the negative points were symmetrized to interpolate zero radius
 -0.0020271   1.0291673502e+02
 -0.0020193   1.0291697200e+02

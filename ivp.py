@@ -3,43 +3,50 @@ import numpy as np
 from scipy.interpolate import interp1d
 from scipy.integrate import solve_ivp
 from cmath import rect
+from random import choices
 
 # parametros
 import parametros as p
 sqrt2 = np.sqrt(2)
-NUM_IT = round((p.t_fin - p.t_ini) / p.passo)   # numero de iteracoes na EDO
 
 def main():
     # matriz no vacuo
     H0re, H0im = calculaMatriz()
 
-    # interpolacao
+    # densidade eletronica
     r, elecdens = np.loadtxt("./elecdens.txt", comments='#', unpack=True)
+    elecdens = p.N_A * elecdens
     N_e = interp1d(r, elecdens, kind='cubic')
-    # N = len(r)
+    # distribuicao de energia
+    E, p_E = np.loadtxt("./8b-energy.txt", comments='#', unpack=True)
+    p_E = p_E / sum(p_E)    # normalizando p_E
+    r_prod, p_prod = np.loadtxt("./8b-distr.txt", comments='#', unpack=True)
+    p_prod = p_prod / sum(p_prod)   # normalizando p_prod
 
-    # EDO
-    t  = np.array([p.t_ini + k * p.passo for k in range(NUM_IT + 1)])
-    y0 = np.array([p.re1, p.re2, p.re3, p.im1, p.im2, p.im3])
-    y  = solve_ivp(func, y0, t,   # talvez trocar pro ivp
-                 atol=p.eps_abs, rtol=p.eps_rel,
-                 args = (H0re, H0im, N_e))
+    # Gerando a distribuição de energia:
+    #For:
+    for i in range(2):
+        t_ini = np.random.choice(r_prod, p=p_prod)
+        for j in range(2):
+            energ = np.random.choice(E, p=p_E)
+            # EDO
+            y0 = np.array([p.re1, p.re2, p.re3, p.im1, p.im2, p.im3])
+            sol = solve_ivp(func, (t_ini, p.t_fin), y0,   # talvez trocar pro ivp
+                            method=p.metodo, args = (H0re, H0im, N_e, energ),   # Runge-Kutta ordem 8
+                            atol=p.eps_abs, rtol=p.eps_rel)
+            t = sol.t
+            y = np.transpose(sol.y)
 
-    # printando
-    d  = "{:" + str(int(np.log10(NUM_IT)) + 1) + "d}"
-    fl = "{:15.5e}"
-    for k in range(NUM_IT + 1):
-        print((d + 8*fl).format(k, t[k], y[k][0], y[k][1], y[k][2],
-                                    y[k][3], y[k][4], y[k][5], norm(y[k])))
-'''
-rtol, atol
-The input parameters rtol and atol determine the error control performed by the solver.
-The solver will control the vector, e, of estimated local errors in y, according to an inequality
-of the form max-norm of (e / ewt) <= 1, where ewt is a vector of positive error weights computed as
-ewt = rtol * abs(y) + atol. rtol and atol can be either vectors the same length as y or scalars.
-Defaults to 1.49012e-8.
-'''
+            # printando
+            length = len(t)
+            d  = "{:" + str(int(np.log10(length)) + 1) + "d}"
+            fl = "{:15.5e}"
+            for k in range(length):
+                print((d + 8*fl).format(k, t[k], y[k][0], y[k][1], y[k][2],
+                                        y[k][3], y[k][4], y[k][5], norm(y[k])))
 
+
+# https://stackoverflow.com/questions/4265988/generate-random-numbers-with-a-given-numerical-distribution
 
 def norm(vec):
     sum = 0.0
@@ -70,9 +77,9 @@ def calculaMatriz():
     # Aqui podemos ter que mudar a energ
     # Ordenamento (depois):
     d1, d2, d3 = -p.dm2_21, 0.0, p.dm2_32
-    M[0][0] = d1 / (2.0 * p.energ)
-    M[1][1] = d2 / (2.0 * p.energ)
-    M[2][2] = d3 / (2.0 * p.energ)
+    M[0][0] = d1
+    M[1][1] = d2
+    M[2][2] = d3
 
     H0 = np.matmul(np.matmul(U, M), np.conj(np.transpose(U)))
     H0re = np.real(H0)
@@ -84,14 +91,14 @@ def D(t, N_e):
     return sqrt2 * p.G_F * N_e(t)
 
 
-def func(y, t, H0re, H0im, N_e):
+def func(t, y, H0re, H0im, N_e, energ):
     f = np.array([  H0im[0][0]*y[0] + H0im[0][1]*y[1] + H0im[0][2]*y[2]  +  H0re[0][0]*y[3] + H0re[0][1]*y[4] + H0re[0][2]*y[5] + D(t, N_e)*y[3],
                     H0im[1][0]*y[0] + H0im[1][1]*y[1] + H0im[1][2]*y[2]  +  H0re[1][0]*y[3] + H0re[1][1]*y[4] + H0re[1][2]*y[5],
                     H0im[2][0]*y[0] + H0im[2][1]*y[1] + H0im[2][2]*y[2]  +  H0re[2][0]*y[3] + H0re[2][1]*y[4] + H0re[2][2]*y[5],
                   - H0re[0][0]*y[0] - H0re[0][1]*y[1] - H0re[0][2]*y[2]  +  H0im[0][0]*y[3] + H0im[0][1]*y[4] + H0im[0][2]*y[5] - D(t, N_e)*y[0],
                   - H0re[1][0]*y[0] - H0re[1][1]*y[1] - H0re[1][2]*y[2]  +  H0im[1][0]*y[3] + H0im[1][1]*y[4] + H0im[1][2]*y[5],
                   - H0re[2][0]*y[0] - H0re[2][1]*y[1] - H0re[2][2]*y[2]  +  H0im[2][0]*y[3] + H0im[2][1]*y[4] + H0im[2][2]*y[5]])
-    return f
+    return (1 / (2.0 * energ)) * f
 
 
 def graustorad(a):
