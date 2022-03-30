@@ -8,4 +8,4 @@ rodei o comando
 time python3 ivp.py > output.txt
 ```
 
-e demorou `18.6s`{.sh}.
+e demorou `18.6s`.
