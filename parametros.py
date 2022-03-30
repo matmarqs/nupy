@@ -1,3 +1,7 @@
+# simulacao
+metodo = 'DOP853'   # qual metodo utilizar
+num_rng = 1000      # quantos neutrinos aleatorios gerar
+
 num_nu = 3  # quantos neutrinos, 2 ou 3
 t_ini = 0.0
 t_fin = 1.0
@@ -11,9 +15,9 @@ theta13 = 8.57
 deltacp = 195.0
 
 # parametros da EDO
-passo = 1e-7
-eps_abs = 1e-8
-eps_rel = 1e-8
+#passo = 1e-7
+eps_abs = 1e-4
+eps_rel = 1e-4
 
 # condicao inicial
 re1 = 1.0
@@ -25,8 +29,8 @@ im3 = 0.0
 
 # constantes
 G_F = 3.0
-N_A = 6.02214076 * 10e23
+#N_A = 6.02214076 * 10e23
+N_A = 1.0
 energ = 1.0
-metodo = 'DOP853'   # qual metodo utilizar
 
 # energia em MeV, distancia em R_solar, velocidade em c=1

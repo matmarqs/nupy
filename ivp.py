@@ -3,7 +3,6 @@ import numpy as np
 from scipy.interpolate import interp1d
 from scipy.integrate import solve_ivp
 from cmath import rect
-from random import choices
 
 # parametros
 import parametros as p
@@ -23,27 +22,30 @@ def main():
     r_prod, p_prod = np.loadtxt("./8b-distr.txt", comments='#', unpack=True)
     p_prod = p_prod / sum(p_prod)   # normalizando p_prod
 
-    # Gerando a distribuição de energia:
-    #For:
-    for i in range(2):
+    # Gerando as distribuicoes
+    for i in range(p.num_rng):
         t_ini = np.random.choice(r_prod, p=p_prod)
-        for j in range(2):
-            energ = np.random.choice(E, p=p_E)
-            # EDO
-            y0 = np.array([p.re1, p.re2, p.re3, p.im1, p.im2, p.im3])
-            sol = solve_ivp(func, (t_ini, p.t_fin), y0,   # talvez trocar pro ivp
-                            method=p.metodo, args = (H0re, H0im, N_e, energ),   # Runge-Kutta ordem 8
-                            atol=p.eps_abs, rtol=p.eps_rel)
-            t = sol.t
-            y = np.transpose(sol.y)
+        energ = np.random.choice(E, p=p_E)
+        # EDO
+        y0 = np.array([p.re1, p.re2, p.re3, p.im1, p.im2, p.im3])
+        sol = solve_ivp(func, (t_ini, p.t_fin), y0,
+                        method=p.metodo, args = (H0re, H0im, N_e, energ),   # Runge-Kutta ordem 8
+                        atol=p.eps_abs, rtol=p.eps_rel)
+        # t = sol.t
+        y = np.transpose(sol.y)
 
-            # printando
-            length = len(t)
-            d  = "{:" + str(int(np.log10(length)) + 1) + "d}"
-            fl = "{:15.5e}"
-            for k in range(length):
-                print((d + 8*fl).format(k, t[k], y[k][0], y[k][1], y[k][2],
-                                        y[k][3], y[k][4], y[k][5], norm(y[k])))
+        # printando a probabilidade de sobrevivencia ao sair do Sol
+        fl = "{:15.5e}"
+        print((3*fl).format(t_ini, energ, sobrev(y[-1])))
+        # o output sao tres colunas da forma
+        # t_ini     energ       p_sobrev
+
+        ### printar todos os steps
+        # d  = "{:" + str(int(np.log10(length)) + 1) + "d}" # numero de iteracoes
+        # length = len(t)
+        # for k in range(length):
+        #     print((d + 8*fl).format(k, t[k], y[k][0], y[k][1], y[k][2],
+        #                             y[k][3], y[k][4], y[k][5], norm(y[k])))
 
 
 # https://stackoverflow.com/questions/4265988/generate-random-numbers-with-a-given-numerical-distribution
@@ -54,6 +56,9 @@ def norm(vec):
         sum += ele*ele
     return sum
 
+
+def sobrev(state):  # state = (re1, re2, re3, im1, im2, im3)
+    return state[0]*state[0] + state[3]*state[3]
 
 def calculaMatriz():
     th12 = graustorad(p.theta12)
@@ -97,8 +102,8 @@ def func(t, y, H0re, H0im, N_e, energ):
                     H0im[2][0]*y[0] + H0im[2][1]*y[1] + H0im[2][2]*y[2]  +  H0re[2][0]*y[3] + H0re[2][1]*y[4] + H0re[2][2]*y[5],
                   - H0re[0][0]*y[0] - H0re[0][1]*y[1] - H0re[0][2]*y[2]  +  H0im[0][0]*y[3] + H0im[0][1]*y[4] + H0im[0][2]*y[5] - D(t, N_e)*y[0],
                   - H0re[1][0]*y[0] - H0re[1][1]*y[1] - H0re[1][2]*y[2]  +  H0im[1][0]*y[3] + H0im[1][1]*y[4] + H0im[1][2]*y[5],
-                  - H0re[2][0]*y[0] - H0re[2][1]*y[1] - H0re[2][2]*y[2]  +  H0im[2][0]*y[3] + H0im[2][1]*y[4] + H0im[2][2]*y[5]])
-    return (1 / (2.0 * energ)) * f
+                  - H0re[2][0]*y[0] - H0re[2][1]*y[1] - H0re[2][2]*y[2]  +  H0im[2][0]*y[3] + H0im[2][1]*y[4] + H0im[2][2]*y[5]]) / (2.0 * energ)
+    return f
 
 
 def graustorad(a):
