@@ -1,6 +1,7 @@
 # simulacao
 metodo = 'DOP853'   # qual metodo utilizar
-num_rng = 1000      # quantos neutrinos aleatorios gerar
+# quantos neutrinos aleatorios gerar
+num_rng = 10000
 
 num_nu = 3  # quantos neutrinos, 2 ou 3
 t_ini = 0.0

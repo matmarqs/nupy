@@ -7,6 +7,7 @@ from cmath import rect
 # parametros
 import parametros as p
 sqrt2 = np.sqrt(2)
+fl = "{:15.5e}"
 
 def main():
     # matriz no vacuo
@@ -35,7 +36,6 @@ def main():
         y = np.transpose(sol.y)
 
         # printando a probabilidade de sobrevivencia ao sair do Sol
-        fl = "{:15.5e}"
         print((3*fl).format(t_ini, energ, sobrev(y[-1])))
         # o output sao tres colunas da forma
         # t_ini     energ       p_sobrev
