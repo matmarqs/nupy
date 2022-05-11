@@ -19,13 +19,14 @@ def main():
     D = interp1d(r, elecdens, kind='cubic')
     # distribuicao de energia
     E, p_E = np.loadtxt("./8b-energy.txt", comments='#', unpack=True)
+    E = 10**6 * E   # MeV = 10**6 eV
     r_prod, p_prod = np.loadtxt("./8b-distr.txt", comments='#', unpack=True)
 
     # Gerando as distribuicoes
-    r_ini = 1200
-    E_ini = 400
-    for t_ini in r_prod[r_ini:r_ini + 6]:
-        for energ in E[E_ini:E_ini + 6]:
+    #r_ini = 1200
+    #E_ini = 400
+    for t_ini in r_prod:
+        for energ in E:
             # EDO
             y0 = np.array([p.re1, p.re2, p.re3, p.im1, p.im2, p.im3])
             sol = solve_ivp(func, (t_ini, p.t_fin), y0,

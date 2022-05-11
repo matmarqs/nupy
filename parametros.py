@@ -5,12 +5,12 @@ num_nu = 3  # quantos neutrinos, 2 ou 3
 t_fin = 1.0
 
 # dados do NuFit
-dm2_21 = 34.0
-dm2_32 = 170.5
+dm2_21 = 7.42e-5    # eV^2
+dm2_32 = 2.514e-3   # eV^2
 theta12 = 33.44
 theta23 = 49.2  # todos os angulos em graus
 theta13 = 8.57
-deltacp = 195.0
+deltacp = 194.0
 
 # parametros da EDO
 eps_abs = 1e-5
@@ -26,8 +26,7 @@ im3 = 0.0
 
 # constantes
 #G_F = 1.1663787e-11    # em MeV
-G_F = 1
-#N_A = 6.02214076e+23
-N_A = 1
+G_F = 1.1663787e-23     # eV^{-2}
+N_A = 6.02214076e+23    # Avogadro
 
-# energia em MeV, distancia em R_solar, velocidade em c=1
+# energia em eV, distancia em R_solar, velocidade em c=1
