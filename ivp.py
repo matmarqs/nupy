@@ -20,13 +20,17 @@ def main():
     # distribuicao de energia
     E, p_E = np.loadtxt("./8b-energy.txt", comments='#', unpack=True)
     E = 10**6 * E   # MeV = 10**6 eV
+    p_E = p_E / sum(p_E)    # normalizando p_E
     r_prod, p_prod = np.loadtxt("./8b-distr.txt", comments='#', unpack=True)
+    p_prod = p_prod / sum(p_prod)   # normalizando p_prod
 
     # Gerando as distribuicoes
-    #r_ini = 1200
-    #E_ini = 400
-    for t_ini in r_prod:
-        for energ in E:
+    r_ini = r[0]; r_fin = r[-1]
+    for t_ini in np.linspace(0.9, 1, num = 200):
+        for _ in range(16): # sorteamos 16 energias para cada dado de raio
+            # sorteando energias de acordo com p_E
+            energ = np.random.choice(E, p=p_E)
+
             # EDO
             y0 = np.array([p.re1, p.re2, p.re3, p.im1, p.im2, p.im3])
             sol = solve_ivp(func, (t_ini, p.t_fin), y0,
