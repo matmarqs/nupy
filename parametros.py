@@ -1,7 +1,13 @@
+# condicoes
+teste_nu2 = True
+elecdens_file = "elecdens.txt"
+elecdens_test = "elecdens.txt"
+#elecdens_test = "elecmedia.txt"
+num_nu = 2  # quantos neutrinos, 2 ou 3
+
 # simulacao
 metodo = 'DOP853'   # qual metodo utilizar
 
-num_nu = 3  # quantos neutrinos, 2 ou 3
 t_fin = 1.0
 
 # dados do NuFit
@@ -13,8 +19,8 @@ theta13 = 8.57
 deltacp = 194.0
 
 # parametros da EDO
-eps_abs = 1e-5
-eps_rel = 1e-5
+eps_abs = 1e-8
+eps_rel = 1e-8
 
 # condicao inicial
 re1 = 1.0
@@ -25,8 +31,9 @@ im2 = 0.0
 im3 = 0.0
 
 # constantes
-#G_F = 1.1663787e-11    # em MeV
 G_F = 1.1663787e-23     # eV^{-2}
 N_A = 6.02214076e+23    # Avogadro
+inv_cm_to_eV = 1.23981e-4
+MeV = 1e+6
 
 # energia em eV, distancia em R_solar, velocidade em c=1
